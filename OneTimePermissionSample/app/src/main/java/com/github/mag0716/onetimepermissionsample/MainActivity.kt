@@ -11,15 +11,29 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "OneTimePermission"
-        private const val LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // one-time permission が選択できる
         button1.setOnClickListener {
-            requestPermission(LOCATION_PERMISSION)
+            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        button2.setOnClickListener {
+            requestPermission(Manifest.permission.RECORD_AUDIO)
+        }
+        button3.setOnClickListener {
+            requestPermission(Manifest.permission.CAMERA)
+        }
+
+        // one-time permission が選択できない
+        button4.setOnClickListener {
+            requestPermission(Manifest.permission.READ_CALENDAR)
+        }
+        button5.setOnClickListener {
+            requestPermission(Manifest.permission.READ_CONTACTS)
         }
     }
 
