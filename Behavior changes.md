@@ -51,3 +51,34 @@ https://developer.android.com/preview/behavior-changes-all
 
 * Android 10 で導入された fdsan のデフォルトモードが変更される
   * 警告されていたものがエラーによって中断されるようになる
+
+### Apps targeting Android 11
+
+https://developer.android.com/preview/behavior-changes-11
+
+#### Scoped storage
+
+* Android 10 で Scoped storage が導入されたが対応時間の確保のために `requestLegacyExternalStorage` が用意されている
+* Android 11 では `requestLegacyExternalStorage` が利用不可になる
+* https://developer.android.com/preview/privacy/storage
+
+#### Directory access restrictions
+
+* Storage Access Framework を利用する場合、`ACTION_OPEN_DOCUMENT`, `ACTION_OPEN_DOCUMENT_TREE` で特定のディレクトリにアクセスできなくなる
+* https://developer.android.com/preview/privacy/storage#directory-access-restrictions
+
+#### Storage permissions
+
+* storage に関するパーミッションの動作が変更された
+* https://developer.android.com/preview/privacy/storage?hl=ja#permissions
+
+#### MAC randomization
+
+* Android 10 以下は SSID 毎に MACアドレスが決まる
+* Android 11 以上では FQDN毎に MACアドレスが決まる
+
+#### Netlink MAC restrictions
+
+* 権限のないアプリでは MACアドレスのアクセスができなくなる
+  * `getifaddrs()`, `NetworkInterface.getHardwareAddress()` に影響する
+  * `ConnectivityManager` を利用する必要がある
