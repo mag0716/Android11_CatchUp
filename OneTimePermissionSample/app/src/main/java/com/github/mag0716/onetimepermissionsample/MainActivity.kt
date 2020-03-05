@@ -58,18 +58,16 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d(TAG, "onRequestPermissionResult : ${permissions[0]}, ${grantResults[0]}")
+        for ((index, permission) in permissions.withIndex()) {
+            Log.d(TAG, "onRequestPermissionResult : $permission, ${grantResults[index]}")
+        }
     }
 
     private fun requestPermission(features: Array<String>) {
-        val feature = features[0]
-        if (ContextCompat.checkSelfPermission(this, feature)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            val t = arrayOf(features)
+        if (features.asSequence().all { isGranted(it) }) {
             Toast.makeText(
                 this,
-                "$feature's permission is granted.",
+                "${features.toList()} is granted.",
                 Toast.LENGTH_SHORT
             ).show()
         } else {
@@ -80,4 +78,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    private fun isGranted(feature: String) =
+        ContextCompat.checkSelfPermission(this, feature) == PackageManager.PERMISSION_GRANTED
 }
