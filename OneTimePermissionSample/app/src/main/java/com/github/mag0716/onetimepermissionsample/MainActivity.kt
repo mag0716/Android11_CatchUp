@@ -2,6 +2,7 @@ package com.github.mag0716.onetimepermissionsample
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -22,21 +23,32 @@ class MainActivity : AppCompatActivity() {
 
         // one-time permission が選択できる
         button1.setOnClickListener {
-            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            val features = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                )
+            } else {
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            }
+            requestPermission(features)
+
         }
         button2.setOnClickListener {
-            requestPermission(Manifest.permission.RECORD_AUDIO)
+            requestPermission(arrayOf(Manifest.permission.RECORD_AUDIO))
         }
         button3.setOnClickListener {
-            requestPermission(Manifest.permission.CAMERA)
+            requestPermission(arrayOf(Manifest.permission.CAMERA))
         }
 
         // one-time permission が選択できない
         button4.setOnClickListener {
-            requestPermission(Manifest.permission.READ_CALENDAR)
+            requestPermission(arrayOf(Manifest.permission.READ_CALENDAR))
         }
         button5.setOnClickListener {
-            requestPermission(Manifest.permission.READ_CONTACTS)
+            requestPermission(arrayOf(Manifest.permission.READ_CONTACTS))
         }
     }
 
@@ -46,24 +58,27 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d(TAG, "onRequestPermissionResult : ${permissions[0]}, ${grantResults[0]}")
+        for ((index, permission) in permissions.withIndex()) {
+            Log.d(TAG, "onRequestPermissionResult : $permission, ${grantResults[index]}")
+        }
     }
 
-    private fun requestPermission(feature: String) {
-        if (ContextCompat.checkSelfPermission(this, feature)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
+    private fun requestPermission(features: Array<String>) {
+        if (features.asSequence().all { isGranted(it) }) {
             Toast.makeText(
                 this,
-                "$feature's permission is granted.",
+                "${features.toList()} is granted.",
                 Toast.LENGTH_SHORT
             ).show()
         } else {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(feature),
+                features,
                 0
             )
         }
     }
+
+    private fun isGranted(feature: String) =
+        ContextCompat.checkSelfPermission(this, feature) == PackageManager.PERMISSION_GRANTED
 }
