@@ -23,15 +23,19 @@ class MainActivity : AppCompatActivity() {
 
         // one-time permission が選択できる
         button1.setOnClickListener {
-            val features = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                )
-            } else {
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
+            val features = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    // TODO: Android 11 preview1 ではクラッシュする
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    )
+                }
+                else -> {
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                }
             }
             requestPermission(features)
 
