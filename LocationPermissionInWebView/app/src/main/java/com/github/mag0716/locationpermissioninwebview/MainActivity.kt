@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.webkit.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,6 +13,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_LOCATION = 100
+        private const val REQUEST_LOCATION_IN_WEBVIEW = 101
     }
 
     private var origin: String? = null
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        button.setOnClickListener {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION)
+        }
         webView.settings.apply {
             javaScriptEnabled = true
             setGeolocationEnabled(true)
@@ -44,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                     callback?.invoke(origin, false, false)
                     this@MainActivity.origin = origin
                     this@MainActivity.callback = callback
-                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION)
+                    requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION_IN_WEBVIEW)
                 }
             }
         }
@@ -57,7 +62,16 @@ class MainActivity : AppCompatActivity() {
             permissions: Array<out String>,
             grantResults: IntArray) {
         if (requestCode == REQUEST_LOCATION) {
+            Toast.makeText(
+                    this,
+                    "onRequestPermissionsResult : ${permissions[0]} is ${grantResults[0]}",
+                    Toast.LENGTH_SHORT)
+                    .show()
+
+        } else if (requestCode == REQUEST_LOCATION_IN_WEBVIEW) {
             callback?.invoke(origin, grantResults[0] == PackageManager.PERMISSION_GRANTED, false)
         }
     }
+
+
 }
