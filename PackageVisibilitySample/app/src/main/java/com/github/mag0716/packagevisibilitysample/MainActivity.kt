@@ -24,7 +24,14 @@ class MainActivity : AppCompatActivity() {
         val installedApplications = packageManager.getInstalledApplications(0)
         val installedPackages = packageManager.getInstalledPackages(0)
 
-        Log.d(TAG, "installedApplications: $installedApplications")
-        Log.d(TAG, "installedPackages: $installedPackages")
+        Log.d(TAG, "installedApplications: ")
+        for (installedApplication in installedApplications) {
+            Log.d(TAG, "$installedApplication")
+        }
+        Log.d(TAG, "")
+        Log.d(TAG, "installedPackages: ")
+        for (installedPackage in installedPackages) {
+            Log.d(TAG, "$installedPackage")
+        }
     }
 }
