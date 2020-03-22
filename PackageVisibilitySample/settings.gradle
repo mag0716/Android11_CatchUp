@@ -1,2 +1,3 @@
 rootProject.name='PackageVisibilitySample'
 include ':app'
+include ':packagevisibilitytarget'
