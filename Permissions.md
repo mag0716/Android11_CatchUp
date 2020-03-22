@@ -8,11 +8,21 @@ https://developer.android.com/preview/privacy/permissions
 * Activity が表示されている間だけ権限が付与される
 * フォアグラウンド Service が実行されている場合は Service が起動している間は権限が付与される
 
+#### Dialog shown when requesting permission again
+
+* One-time permission を再度リクエストする場合のダイアログ
+  * Android 10 以上 `ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION`：「Only this time」が選択肢があるダイアログ
+  * Android 10 `ACCESS_COARSE_LOCATION or ACCESS_FINE_LOCATION, followed by ACCESS_BACKGROUND_LOCATION`：`ACCESS_BACKGROUND_LOCATION` が別のダイアログでリクエストされる
+  * Android 以下 All available location permissions simultaneously：「Allow in settings」リンクが含まれたダイアログ
+
+
 #### WebView location access
 
 * WebView が位置情報にアクセスする場合は、One-time permissions のみに制限される
 
 ### Permission dialog visibility
+
+※ https://developer.android.com/privacy/best-practices#permissions に従っていたら対応は不要
 
 * 権限に対して2度拒否すると「don't ask again」と同じ動作をする
 * バックキーでダイアログを閉じた場合は拒否としてカウントしない
