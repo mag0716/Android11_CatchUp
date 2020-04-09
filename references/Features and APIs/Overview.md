@@ -190,3 +190,105 @@ GNSS
 * `GnssAntennaInfo` は `ACCESS_FINE_LOCATION` が必要
 
 ### Chat Bubbles
+
+* 開発者オプションの設定なしに `Bubbles` が利用可能になった
+* Note：preview 後以降はパーミッションが必要になる
+* Android 11 で以下が改善された
+  * `BubbleMetadata.Builder.createShortcutBubble` でショートカットIDから `BubbleMetadata` が生成される
+  * `Icon.createWithContentUri` か `createWithAdaptiveBitmapContentUri` でアイコンが生成される
+  * `BubbleMetadata.getIntent` が deprecated になり、`BubbleMetadata.getBubbleIntent` に変わる
+  * `BubbleMetadata.getIcon` が deprecated になり、`BubbleMetadata.getBubbleIcon` に変わる
+  * `BubbleMetadata.Builder.setIntent` と `setIcon` が deprecated になり、`BubbleMetadata.Builder.createIntentBubble` に変わる
+
+### Updates for accessibility service developers
+
+* HTML と画像にテキストを追加できるようになる
+* `contentDescription` より UI 要素の状態を説明を処理するために `getStateDescription` を利用する
+* タッチイベントやジェスチャーがバイパスするようにするために `setTouchExplorationPassthroughRegion`, `setGestureDetectionPassthroughRegion` を利用する
+* `FLAG_SECURE` が無効な画面のスクショに enter や next などの IME action をリクエストできるようになる
+
+### Incremental APK installation
+
+* バックグラウンドでストリーミングしながらアプリを起動する分だけのデータをインストールすることが可能
+* `adb install --incremental`
+* v4 signature file での署名が必須
+
+### APK signature scheme v4
+
+* `apk-name.apk.idsig` が生成される
+* incremental APK installation をサポートする
+
+### ANGLE for OpenGL ES
+
+* 未経験の分野なのでスキップ
+
+### Dynamic intent filters
+
+* Android 10 以下では intent filter を動的に変化させる方法はなかった
+* Android 11 では `android:mimeGroup` が追加され、動的に intent filter を修正することが可能になる
+* Note
+  * パッケージ毎に `android:mimeGroup` 文字列が定義される
+  * 複数の intent filter で同じ mimeGroup 文字列を定義できる
+  * 異なるパッケージでは MIME group を共有できないが、同じ文字列は利用可能
+
+### Better support for HEIF images with multiple frames
+
+HEIF：高画質のまま軽量化した写真の保存形式
+
+* `ImageDecoder.decodeDrawable` に連続した画像を渡すと `AnimatedImageDrawable` が返される
+* `MediaMetadataRetriver.getImageAtIndex` で個別フレームを取得することが可能
+
+### Better support for waterfall displays
+
+waterfall display：画面が側面に回り込んだディスプレイ
+
+* waterfall display 用の API が提供される
+* `DisplayCutout.getSafeInset` では waterfall エリアをのぞいた領域が返される
+* waterfall エリアにコンテンツを描画するためには以下の API を利用する
+  * `DisplayCutout.getWaterfallInsets` で waterfall エリアのサイズが取得できる
+  * `layoutInDisplayCutoutMode` に `LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALLWAYS` をセットすることで waterfall エリアをカットアウトとして拡張することができる
+* Note
+  * `LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS` をセットしない場合、ノッチや waterfall エリアをのぞいがディスプレイになる
+
+### Frame rate API
+
+* 意図した Frame rate をシステムに通知する API が提供される
+  * 主な目的は全てのディスプレイのリフレッシュレートをサポートによる利点の享受
+
+### Conversation improvements
+
+* 2者間以上のリアルタイムコミュニケーションに関する改善点がある
+  * [詳細](https://developer.android.com/preview/features/conversations)
+
+### Media
+
+#### OpenSL ES is deprecated
+
+* OPENSL ES が deprecated になり、Oboe を代わりに利用する必要がある
+* プラットフォームは既存アプリでサポートは続けるが、ビルド時に警告が表示されるようになる
+
+#### New AAudio function AAudioStream_release()
+
+* `AAudioStream_close()` はオーディオストリームのリリースとクローズを同時に行う
+  * 別プロセスでアクセスされるとプロセスがクラッシュする危険性がある
+* オーディオストリームのリリースだけ行う `AAudioStream_release()` が追加される
+
+#### Restricting audio access
+
+* アプリでの録音について2つの機能制限が含まれる
+
+##### Audio capture from a USB device
+
+* `RECORD_AUDIO` 権限がないアプリが `UsbManager` を使ってヘッドセットなど USBオーディオデバイスに直接アクセスをリクエストした場合、ユーザに権限を確認させる警告メッセージが表示されるようになる
+  * always use は無視される
+  * この動作が困るなら `RECORD_AUDIO` 権限をリクエストする必要がある
+
+##### Concurrent mic access
+
+* Android 10 から `RoleManager.ROLE_ASSISATANT` を保持するアプリが他のアプリと同時にオーディオキャプチャができる
+  * 他のアプリが `CAMCORDER` や `VOICE_COMMUNICATION` などの `privacy-sensitive` を利用している場合は同時利用が許可されない
+  * https://developer.android.com/guide/topics/media/sharing-audio-input
+* Android 11 から `AudioRecord`, `MediaRecorder`, `AAudioStream` に API が追加される
+  * これらの API は同時キャプチャの有効・無効を切り替えが可能になる
+  * `setPrivacySensitive` が `true` の場合、特権が与えられたアプリでさえ同時にキャプチャが不可能になる
+    * オーディオソースのデフォルトの動作を上書きする
