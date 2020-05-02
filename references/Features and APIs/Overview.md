@@ -20,7 +20,10 @@ waterfall display：画面が側面に回り込んだディスプレイ
 
 ##### Hinge angle sensor and foldables
 
-**TODO**
+* `TYPE_HINGE_ANGLE` を利用することで foldable デバイスの角度を取得することが可能
+* foldable デバイスの折りたたみの状態は以下で取得することが可能
+  * `DeviceState.getPosture()`
+  * `registerDeviceStateChangeCallback()`
 
 #### Conversations
 
@@ -49,7 +52,11 @@ waterfall display：画面が側面に回り込んだディスプレイ
 
 #### Data sharing with content capture service
 
-**TODO**
+* アプリは端末のコンテンツキャプチャサービスとデータを共有することが可能になる
+  * 現在再生されている曲の名前を表示する
+  * 駅や空港の近くにいるときに関連する旅行情報を表示する
+* `ContentCaptureManager#shareData()`
+  * システムがデータ共有のリクエストを許可すると、アプリは書き込みの可能な file descriptor を受け取る
 
 #### 5G visual indicators
 
@@ -100,7 +107,10 @@ https://developer.android.com/preview/features/shared-datasets
 
 #### Wireless debugging
 
-**TODO**
+* adb 経由でアプリのデプロイとデバッグがワイヤレスで可能になる
+* 利用するためにはペアリングコードを使ってペアリングする必要がある
+  * `adp pair ipaddr:port`
+    * ペアリングコード、IPアドレス、ポートは開発者オプションで有効にすると表示される
 
 #### ADB Incremental APK installation
 
@@ -110,7 +120,9 @@ https://developer.android.com/preview/features/shared-datasets
 
 #### Error detection using the native memory allocation
 
-**TODO**
+* メモリ解放後の利用やヒープのオーバフローのバグを検知可能になる
+
+https://developer.android.com/ndk/guides/gwp-asan
 
 #### Neural Networks API 1.3
 
@@ -130,11 +142,20 @@ https://developer.android.com/preview/features/shared-datasets
 
 ##### Improved IME transitions
 
-**TODO**
+* IME の表示、非表示時のアニメーションを改善する API が追加される
+  * 表示：`view.getInsetsController().show(Type.ime())`
+  * 非表示：`view.getInsetsController().hide(Type.ime())`
+  * 表示状態の確認：`view.getRootWindowInsets().isVisibile(Type.ime())`
+* アプリの View と IME の表示・非表示を同期させたい場合は、`View.setWindowInsetsAnimationCallback()`
+ に `WindowInsetsAnimation.Callback` を提供する
 
-##### Controlling the IME animation
+サンプル：https://github.com/android/user-interface-samples/tree/master/WindowInsetsAnimation
 
-**TODO**
+###### Controlling the IME animation
+
+* IME のアニメーションについてもコントロールが可能になる
+  * `setOnApplyWindowInsetsListener()`
+  * `controlWindowInsetsAnimation()`
 
 ##### Updates to the ICU libraries
 
@@ -147,9 +168,13 @@ https://developer.android.com/preview/features/shared-datasets
 
 ##### Allocating MediaCodec buffers
 
-**TODO**
-* New classes:
-* New methos:
+* インプットとアウプットバッファの確保時によりコントロールを可能にするために `MediaCodec` API が追加される
+  * より効率的にメモリを扱うことが可能になる
+* `MediaCodec.Callback` の以下のメソッドの動作が変わる
+  * `onInputBufferAvailable()`
+    * `MediaCodec.getInputBuffer()` と `MediaCodec.queueInputBuffer()` の代わりに `MediaCodec.getQueueRequest` を利用する必要がある
+  * `onOutputBufferAvailable()`
+    * `MediaCodec.getOutputBuffer` の代わりに `MediaCodec.getOutputFrame()` を利用する必要がある
 
 ##### Low-latency decoding in MediaCodec
 
@@ -178,6 +203,8 @@ https://developer.android.com/preview/features/shared-datasets
 
 ##### Wi-Fi Passpoint enhancements
 
+Passpoint はセキュアな Wi-Fi スポットへの認証と接続を自動で有効にする
+
 ###### Expiration date enforcement and notification
 
 * 利用期限が追加され期限切れの証明書で自動接続されないようになる
@@ -193,15 +220,16 @@ https://developer.android.com/preview/features/shared-datasets
 
 ###### Allow multiple profiles with identical FQDN
 
-**TODO**
+* [詳細不明] FQDN が同じ Passpoint のプロファイルのインストールが許可される
 
 ###### Allow to install profiles without a Root CA certificate
 
-**TODO**
+* [詳細不明] Root CA の認証がないプロファイルが許可される
 
 ###### Improved Home and Roaming provider matching
 
-**TODO**
+* アドバタイズされた認証方法に関係なく `Home` と `Roaming` ネットワークをマッチする
+  * [疑問点] `Home` とは？
 
 ##### Wi-Fi suggestion API is expanded
 
@@ -211,7 +239,15 @@ https://developer.android.com/preview/features/shared-datasets
 
 ##### CallScreeningService updates
 
-**TODO**
+```
+STIR/SHAKEN
+発信者電話番号の偽装を防ぐためのプロトコル
+電話番号の偽装の有無を判別できる
+```
+
+* `CallScreeningService` が着信時に STIR/SHAKEN についての情報のリクエストが可能になる
+  * `Call.Details` の一部として情報が含まれる
+* `CallScreeningService` が `READ_CONTACTS` 権限を保持していたら、アプリは着信時、発信時に通知される
 
 ##### GNSS antenna support
 
@@ -308,6 +344,7 @@ HEIF：高画質のまま軽量化した写真の保存形式
 
 * `getHistoricalProcessExitReasons()` で最近のプロセス終了の理由を取得することができる
   * `ApplicationExitInfo` が返却されアプリ終了に関係する情報が含まれる
+* `setProcessStateSummary` で解析のための情報を保存しておくこともできる
 
 #### Resource loaders
 
@@ -336,12 +373,14 @@ HEIF：高画質のまま軽量化した写真の保存形式
 
 #### Autofill enhancements
 
-**TODO**
+* Autofill Service が改善された
 
-#### Hint identifiers in AssistStructure.ViewNode
+##### Hint identifiers in AssistStructure.ViewNode
 
-**TODO**
+* 署名ハッシュの計算のために View のプロパティをベースにし、hint が適したプロパティだが端末のロケールによっては hint が異なる場合があり問題になっていた
+  * その問題を解決するために `AssistStructure.ViewNode` が拡張され `getHintIdEntry()` が追加される
 
-#### Datasets shown events
+##### Datasets shown events
 
-**TODO**
+* Autofill Service の改善のために、ユーザが選択肢なかったケースを `TYPE_DATASETS_SHOWN` で保存される
+  * `TYPE_DATASET_SELECTED` と組み合わせて使うことで何度も表示されないように制御することが可能
