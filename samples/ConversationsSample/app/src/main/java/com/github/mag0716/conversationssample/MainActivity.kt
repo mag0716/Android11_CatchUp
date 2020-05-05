@@ -2,7 +2,9 @@ package com.github.mag0716.conversationssample
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
             .setContentTitle("new message")
             .setContentText(message)
             .setStyle(notificationStyle)
+            .setBubbleMetadata(createBubbleMetaData())
             .build()
 
         val notificationManager =
@@ -65,5 +68,15 @@ class MainActivity : AppCompatActivity() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun createBubbleMetaData(): NotificationCompat.BubbleMetadata {
+        val intent = Intent(this, MainActivity::class.java)
+        val bubbleIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        return NotificationCompat.BubbleMetadata.Builder()
+            .setDesiredHeight(600)
+            .setIcon(IconCompat.createWithResource(this, R.drawable.ic_android))
+            .setIntent(bubbleIntent)
+            .build()
     }
 }
