@@ -23,35 +23,47 @@ class MainActivity : AppCompatActivity() {
 
         // one-time permission が選択できる
         button1.setOnClickListener {
-            val features = when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                    // TODO: Android 11 preview1 ではクラッシュする
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    )
-                }
-                else -> {
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
-                }
-            }
-            requestPermission(features)
-
+//            val features = when {
+//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+//                    // TODO: Android 11 preview1 - 3 ではクラッシュする
+//                    arrayOf(
+//                        Manifest.permission.ACCESS_FINE_LOCATION,
+//                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+//                    )
+//                }
+//                else -> {
+//                    arrayOf(
+//                        Manifest.permission.ACCESS_FINE_LOCATION
+//                    )
+//                }
+//            }
+//            requestPermission(features)
+            requestPermission(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
         }
         button2.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                requestPermission(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+            } else {
+                Toast.makeText(
+                    this,
+                    "ACCESS_BACKGROUND_LOCATION is not support.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        button3.setOnClickListener {
             requestPermission(arrayOf(Manifest.permission.RECORD_AUDIO))
         }
-        button3.setOnClickListener {
+        button4.setOnClickListener {
             requestPermission(arrayOf(Manifest.permission.CAMERA))
         }
 
         // one-time permission が選択できない
-        button4.setOnClickListener {
+        button5.setOnClickListener {
             requestPermission(arrayOf(Manifest.permission.READ_CALENDAR))
         }
-        button5.setOnClickListener {
+        button6.setOnClickListener {
             requestPermission(arrayOf(Manifest.permission.READ_CONTACTS))
         }
     }
