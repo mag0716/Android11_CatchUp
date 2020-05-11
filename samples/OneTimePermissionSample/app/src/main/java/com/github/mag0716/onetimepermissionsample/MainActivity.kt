@@ -23,26 +23,19 @@ class MainActivity : AppCompatActivity() {
 
         // one-time permission が選択できる
         button1.setOnClickListener {
-//            val features = when {
-//                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-//                    // TODO: Android 11 preview1 - 3 ではクラッシュする
-//                    arrayOf(
-//                        Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//                    )
-//                }
-//                else -> {
-//                    arrayOf(
-//                        Manifest.permission.ACCESS_FINE_LOCATION
-//                    )
-//                }
-//            }
-//            requestPermission(features)
             requestPermission(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
         }
         button2.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                requestPermission(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+                if (isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    requestPermission(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+                } else {
+                    Toast.makeText(
+                        this,
+                        "must grant ACCESS_FINE_LOCATION",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 Toast.makeText(
                     this,
