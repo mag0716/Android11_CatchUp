@@ -14,7 +14,7 @@ waterfall display：画面が側面に回り込んだディスプレイ
 * `DisplayCutout.getSafeInset` では waterfall エリアをのぞいた領域が返される
 * waterfall エリアにコンテンツを描画するためには以下の API を利用する
   * `DisplayCutout.getWaterfallInsets` で waterfall エリアのサイズが取得できる
-  * `layoutInDisplayCutoutMode` に `LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALLWAYS` をセットすることで waterfall エリアをカットアウトとして拡張することができる
+  * `layoutInDisplayCutoutMode` に `LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS` をセットすることで waterfall エリアをカットアウトとして拡張することができる
 * Note
   * `LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS` をセットしない場合、ノッチや waterfall エリアをのぞいがディスプレイになる
 
@@ -311,7 +311,7 @@ https://developer.android.com/ndk/guides/image-decoder
 
 ##### Mute notification sounds and vibrations during active capture
 
-* カメラを利用中はバイブレーションや音をミュートできるようになる
+* 動画撮影中はバイブレーションや音をミュートできるようになる
   * `setCameraAudioRestriction`
 
 ##### Expanded camera support in Android emulator
