@@ -30,11 +30,29 @@ class MainActivity : AppCompatActivity(),
 
         // one-time permission が選択できる
         button1.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+            ) {
+                Toast.makeText(
+                    this,
+                    "show request ACCESS_FINE_LOCATION rationale",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
             requestPermission(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
         }
         button2.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        Toast.makeText(
+                            this,
+                            "show request ACCESS_BACKGROUND_LOCATION rationale",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
                     val dialogFragment = ExplainBackgroundLocationRequirementDialog()
                     dialogFragment.show(
                         supportFragmentManager,
