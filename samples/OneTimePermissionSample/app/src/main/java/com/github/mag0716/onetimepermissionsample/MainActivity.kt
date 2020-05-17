@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -32,30 +33,12 @@ class MainActivity : AppCompatActivity(),
 
         // one-time permission が選択できる
         button1.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
-            ) {
-                ExplainPermissionRequirementDialog.newInstance(Manifest.permission.ACCESS_FINE_LOCATION)
-                    .show(
-                        supportFragmentManager,
-                        ExplainPermissionRequirementDialog::class.java.simpleName
-                    )
-                return@setOnClickListener
-            }
-            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            requestPermissionIfNeeded(Manifest.permission.ACCESS_FINE_LOCATION)
         }
         button2.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 if (isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                        ExplainPermissionRequirementDialog.newInstance(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                            .show(
-                                supportFragmentManager,
-                                ExplainPermissionRequirementDialog::class.java.simpleName
-                            )
-                        return@setOnClickListener
-                    }
-                    ExplainPermissionRequirementDialog.newInstance(Manifest.permission.ACCESS_FINE_LOCATION)
+                    ExplainPermissionRequirementDialog.newInstance(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                         .show(
                             supportFragmentManager,
                             ExplainPermissionRequirementDialog::class.java.simpleName
@@ -77,18 +60,18 @@ class MainActivity : AppCompatActivity(),
         }
 
         button3.setOnClickListener {
-            requestPermission(Manifest.permission.RECORD_AUDIO)
+            requestPermissionIfNeeded(Manifest.permission.RECORD_AUDIO)
         }
         button4.setOnClickListener {
-            requestPermission(Manifest.permission.CAMERA)
+            requestPermissionIfNeeded(Manifest.permission.CAMERA)
         }
 
         // one-time permission が選択できない
         button5.setOnClickListener {
-            requestPermission(Manifest.permission.READ_CALENDAR)
+            requestPermissionIfNeeded(Manifest.permission.READ_CALENDAR)
         }
         button6.setOnClickListener {
-            requestPermission(Manifest.permission.READ_CONTACTS)
+            requestPermissionIfNeeded(Manifest.permission.READ_CONTACTS)
         }
     }
 
@@ -104,6 +87,22 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun requestPermission(permission: String) {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(permission),
+            0
+        )
+    }
+
+    override fun goToSettings() {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:$packageName")
+        )
+        startActivity(intent)
+    }
+
+    private fun requestPermissionIfNeeded(permission: String) {
         if (isGranted(permission)) {
             Toast.makeText(
                 this,
@@ -111,23 +110,25 @@ class MainActivity : AppCompatActivity(),
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(permission),
-                0
-            )
+            if (shouldShowExplainPermissionRequirementDialog(permission)) {
+                ExplainPermissionRequirementDialog.newInstance(permission)
+                    .show(
+                        supportFragmentManager,
+                        ExplainPermissionRequirementDialog::class.java.simpleName
+                    )
+            } else {
+                requestPermission(permission)
+            }
         }
-    }
-
-    override fun goToSettings() {
-        val intent = Intent().apply {
-            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        }
-        startActivity(intent)
     }
 
     private fun isGranted(feature: String) =
         ContextCompat.checkSelfPermission(this, feature) == PackageManager.PERMISSION_GRANTED
+
+    private fun shouldShowExplainPermissionRequirementDialog(feature: String) =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(
+            feature
+        )
 }
 
 class ExplainPermissionRequirementDialog : DialogFragment() {
