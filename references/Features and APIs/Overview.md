@@ -43,13 +43,6 @@ waterfall display：画面が側面に回り込んだディスプレイ
   * `BubbleMetadata.getIcon` が deprecated になり、`BubbleMetadata.getBubbleIcon` に変わる
   * `BubbleMetadata.Builder.setIntent` と `setIcon` が deprecated になり、`BubbleMetadata.Builder.createIntentBubble` に変わる
 
-#### Rich media in quick replies
-
-* quick replies で画像などのコンテンツを追加できるようになる
-* 対応するためには MIME types を指定する必要がある
-  * `RemoteInput.Builder.setAllowDataType()`
-* `RemoteInput.getDataResultsFromIntent()` でコンテンツが含まれていないかをチェックする必要がある
-
 #### Data sharing with content capture service
 
 * アプリは端末のコンテンツキャプチャサービスとデータを共有することが可能になる
