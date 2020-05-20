@@ -24,7 +24,7 @@ Bubbles を利用するとアプリを起動しなくてもコミュニケーシ
 この選択肢を選ぶとアプリがバックグラウンドに遷移するか終了してから一定時間経過するまで機能にアクセスすることが可能になります。
 この期間を経過すると、ユーザが再度権限を許可しない限り機能にアクセスできなくなります。
 
-**TODO:画像**
+![](./images/One-time permission/One-time permission.png)
 
 https://developer.android.com/privacy/best-practices#permissions に従って実装されていれば、
 この変更によってアプリの実装を変える必要はありません。
