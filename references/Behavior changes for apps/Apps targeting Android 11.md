@@ -70,3 +70,16 @@ Caution：古いバージョンの端末をサポートするためには v1 の
 #### Firebase JobDispatcher and GCMNetworkManager
 
 * Android 6.0 以上の端末で `JobDispatcher`, `GcmNetworkManager` が無効化される
+
+### Implicit media capture intents and location metadata
+
+プリインストールされたカメラアプリのみが以下の `Intent` に対応するようになる
+
+* android.media.action.VIDEO_CAPTURE
+* android.media.action.IMAGE_CAPTURE
+* android.media.action.IMAGE_CAPTURE_SECURE
+
+プリインストールされたカメラアプリが複数ある場合は選択するためのダイアログが表示される。
+もし、特定のカメラアプリを使いたい場合は明示的Intent で起動させる必要がある。
+
+位置情報のメタデータを含む場合は、`ACCESS_MEDIA_LOCATION` の定義と `ACCESS_COARSE_LOCATION`か`ACCESS_FINE_LOCATION` のリクエストが必要。
