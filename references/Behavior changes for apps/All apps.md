@@ -22,6 +22,14 @@ Note: この動作はOTAアップデートでの再起動のみなので Direct 
 
 カバーしていない領域なのでスキップ
 
+#### App usage stats
+
+* アプリごとの利用統計を暗号化されたストレージに保存される
+  * 以下の状況で `isUserUnlocked()` が `true` を返さない限り、システムもアプリもデータにアクセスできない
+    * ユーザがシステム起動後にアンロックする
+    * アカウント切り替えを実施
+  * `UsagesStatsManager` を利用している場合はアンロック後にアクセスするよう対応が必要
+
 ### Camera
 
 #### Support for concurrent use of more than one camera
