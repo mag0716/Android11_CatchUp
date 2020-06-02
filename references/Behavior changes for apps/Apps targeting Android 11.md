@@ -6,6 +6,10 @@ https://developer.android.com/preview/behavior-changes-11
 
 https://developer.android.com/preview/privacy
 
+### Compressed resource file
+
+圧縮された `resources.arsc` や 4byteでアライメントされていないファイルを保持しているアプリがインストールできなくなる
+
 ### Connectivity
 
 #### Performant VPNS
