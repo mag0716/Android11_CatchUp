@@ -55,6 +55,16 @@ https://developer.android.com/preview/privacy
 * Toast のカスタマイズが deprecated になり表示されなくなる
 * `SnackBar` への置き換えが推奨
 
+#### APK Signature Scheme v2 now required
+
+v2 の署名スキームでの署名も必須になり、v1 の署名スキームのみだと Android 11 の端末にインストール、更新ができなくなる
+
+v2 以上の署名スキームで署名されているかどうかは Android Studio か `apksigner` で検証できる
+
+Caution：古いバージョンの端末をサポートするためには v1 の署名スキームでの署名も引き続き行う必要がある
+
+メモ：`apksigner verify -v xxx.apk` でどのバージョンで署名されているかがわかる
+
 ### Firebase
 
 #### Firebase JobDispatcher and GCMNetworkManager
