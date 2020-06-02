@@ -77,6 +77,26 @@ Note:以前のバージョンでもカスタムウィジェットでアクセシ
 * `AccessibilityServiceInfo.FLAG_REQUEST_ACCESSIBILITY_BUTTON` を利用しても無視されるようになった
 * `flagRequestAccessibilityButton` に metadata file を指定する必要がある
 
+### User interface
+
+#### SYSTEM_ALRET_WINDOW changes
+
+`SYSTEM_ALERT_WINDOW` 権限を付与する方法に変更がある
+
+##### Certain apps are automatically granted SYSTEM_ALERT_WINDOW permission upon request
+
+`ACTION_MANAGE_OVERLAY_PERMISSION` を送信する必要はない。
+
+`ROLE_CALL_SCREENING` があり `SYSTEM_ALERT_WINDOW` をリクエストするアプリは自動的に権限が付与される
+`ROLE_CALL_SCREENING` を失うと権限も失う
+
+##### MANAGE_OVERLAY_PERMISSION intents always bring user to system permissions screen
+
+Android 11 から、`ACTION_MANAGE_OVERLAY_PERMISSION` は `package:` データは無視され、常に設定画面のトップに遷移するようになる
+
+ユーザは選択したアプリに対して権限を許可、拒否するのかを最初に選択する必要がある
+意図的に許可させることによってユーザを保護するための意図がある
+
 ### App compatibility
 
 #### Non-SDK interface restrictions
