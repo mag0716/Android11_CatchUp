@@ -60,6 +60,18 @@ Note: この動作はOTAアップデートでの再起動のみなので Direct 
 
 ### Accessibility
 
+#### Screen readers require definitions of click-based accessibility actions
+
+以前のバージョンではフレームワークはクリックでのアクセシビリティアクションを適切に処理しなかったウィジェットにタッチイベントをディスパッチしていた。
+
+アクセシビリティアクションを正しく定義したアプリの動作に一貫性を持たせるために Android 11 ではタッチイベントをディスパッチしなくなる。
+代わりにシステムは `ACTION_CLICK`, `ACTION_LONG_CLICK` のクリックベースのアクセシビリティアクションに頼るようになる。
+これはスクリーンリーダーの動作に影響する。
+
+`OnTouchListener` に頼っているアプリはアクセシシビリティアクションを定義するために `replaceAccessibilityAction()` を実行する必要がある。
+
+Note:以前のバージョンでもカスタムウィジェットでアクセシビリティアクションを定義する必要がある。アクセシビリティアクションの定義を簡単にするために https://developer.android.com/guide/topics/ui/accessibility/principles#system-widgets に従うことが推奨されている。
+
 #### Declare accessibility button usage in metadata file
 
 * `AccessibilityServiceInfo.FLAG_REQUEST_ACCESSIBILITY_BUTTON` を利用しても無視されるようになった
