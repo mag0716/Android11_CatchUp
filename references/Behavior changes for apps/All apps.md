@@ -104,3 +104,7 @@ Android 11 から、`ACTION_MANAGE_OVERLAY_PERMISSION` は `package:` データ�
 * Non-SDK interface への制限が更新された
 * Android 11 をターゲットにしていないのであればすぐには影響されないがグレーリストの API の利用はアプリが破壊されるリスクがある
 * https://developer.android.com/preview/non-sdk-11
+
+#### Maps v1 shared library removed
+
+Android 10 の時点で deprecated & 機能停止となっていた v1 の Maps が完全に削除される
