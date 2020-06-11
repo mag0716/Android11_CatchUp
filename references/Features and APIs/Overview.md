@@ -4,6 +4,21 @@ https://developer.android.com/preview/features
 
 ### New experiences
 
+#### Device controls
+
+* 接続済みの外部危機を操作を可能にする `ControlsProviderService` API が追加される
+* 電源メニューに表示される
+
+https://developer.android.com/preview/features/device-control
+
+#### Media Controls
+
+* メディアコントローラーの表示の仕方が変わる
+  * Quick Settings の近くに表示される
+  * 複数のアプリの場合はスワイプでセッションを切り替えられる
+
+https://developer.android.com/preview/features/device-control
+
 #### Screens
 
 ##### Better support for waterfall display
