@@ -58,14 +58,6 @@ waterfall display：画面が側面に回り込んだディスプレイ
   * `BubbleMetadata.getIcon` が deprecated になり、`BubbleMetadata.getBubbleIcon` に変わる
   * `BubbleMetadata.Builder.setIntent` と `setIcon` が deprecated になり、`BubbleMetadata.Builder.createIntentBubble` に変わる
 
-#### Data sharing with content capture service
-
-* アプリは端末のコンテンツキャプチャサービスとデータを共有することが可能になる
-  * 現在再生されている曲の名前を表示する
-  * 駅や空港の近くにいるときに関連する旅行情報を表示する
-* `ContentCaptureManager#shareData()`
-  * システムがデータ共有のリクエストを許可すると、アプリは書き込みの可能な file descriptor を受け取る
-
 #### 5G visual indicators
 
 * `android.Manifest.permission.READ_PHONE_STATE` を `PhoneStateListener.onDisplayInfoChanged` を通じてリクエストできるようになる
@@ -399,3 +391,11 @@ HEIF：高画質のまま軽量化した写真の保存形式
 
 * Autofill Service の改善のために、ユーザが選択肢なかったケースを `TYPE_DATASETS_SHOWN` で保存される
   * `TYPE_DATASET_SELECTED` と組み合わせて使うことで何度も表示されないように制御することが可能
+
+##### Data sharing with content capture service
+
+* アプリは端末のコンテンツキャプチャサービスとデータを共有することが可能になる
+  * 現在再生されている曲の名前を表示する
+  * 駅や空港の近くにいるときに関連する旅行情報を表示する
+* `ContentCaptureManager#shareData()`
+  * システムがデータ共有のリクエストを許可すると、アプリは書き込みの可能な file descriptor を受け取る
