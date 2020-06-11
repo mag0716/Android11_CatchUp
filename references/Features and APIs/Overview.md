@@ -207,6 +207,13 @@ https://developer.android.com/ndk/guides/gwp-asan
 
 * `MediaExtractor` よりもフレキシブルな `MediaParser` が追加
 
+##### Output switcher
+
+* キャストと MediaRouter API を利用したアプリのために新しい動作が実装された
+  * キャスト先の選択がシステムのメディアプレイヤーから選択可能になる
+  * これによってユーザはよりシームレスにキャスト先に切り替えが可能になる
+* アプリは `MediaRouter2` API で表示される選択肢のカスタマイズすることができる
+
 #### Connectivity
 
 ##### Wi-Fi Passpoint enhancements
