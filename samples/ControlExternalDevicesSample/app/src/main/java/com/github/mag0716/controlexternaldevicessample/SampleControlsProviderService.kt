@@ -74,7 +74,7 @@ class SampleControlsProviderService : ControlsProviderService() {
                         ControlButton(true, "turn ON/OFF")
                     )
                 )
-                .setStatus(Control.STATUS_OK)
+                .setStatus(Control.STATUS_OK) // TODO: 外部デバイスの状態を取得
                 .build()
 
             updatePublisher.onNext(control)
