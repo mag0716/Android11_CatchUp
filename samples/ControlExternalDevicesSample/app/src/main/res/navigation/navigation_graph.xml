@@ -9,5 +9,14 @@
         android:id="@+id/deviceListFragment"
         android:name="com.github.mag0716.controlexternaldevicessample.DeviceListFragment"
         android:label="DeviceListFragment"
-        tools:layout="@layout/fragment_device_list" />
+        tools:layout="@layout/fragment_device_list">
+        <action
+            android:id="@+id/actionMoveToDeviceSetting"
+            app:destination="@id/deviceSettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deviceSettingFragment"
+        android:name="com.github.mag0716.controlexternaldevicessample.DeviceSettingFragment"
+        android:label="DeviceSettingFragment"
+        tools:layout="@layout/fragment_device_setting" />
 </navigation>
