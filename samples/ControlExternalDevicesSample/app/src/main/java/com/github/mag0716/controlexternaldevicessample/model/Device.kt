@@ -8,4 +8,11 @@ data class Device(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
     val placeLocation: String
-)
+) {
+    companion object {
+        fun createNewDevice(
+            name: String,
+            placeLocation: String
+        ) = Device(0, name, placeLocation)
+    }
+}
