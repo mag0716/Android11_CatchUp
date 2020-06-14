@@ -17,4 +17,8 @@ class DeviceRepository(private val deviceDao: DeviceDao) {
     suspend fun addDevice(device: Device) = withContext(Dispatchers.IO) {
         deviceDao.insertDevices(device)
     }
+
+    suspend fun updateDevice(device: Device) = withContext(Dispatchers.IO) {
+        deviceDao.updateDevices(device)
+    }
 }

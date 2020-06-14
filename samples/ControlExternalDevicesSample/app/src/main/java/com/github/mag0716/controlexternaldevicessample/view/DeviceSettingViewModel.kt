@@ -17,10 +17,15 @@ class DeviceSettingViewModel(application: Application) : AndroidViewModel(applic
     private val _device: MutableLiveData<Device> = MutableLiveData()
     val device: LiveData<Device> = _device
 
-    fun addDevice(name: String, location: String) {
+    fun addOrUpdateDevice(name: String, location: String) {
         val deviceRepository = getApplication<App>().deviceRepository
         viewModelScope.launch {
-            deviceRepository.addDevice(Device.createNewDevice(name, location))
+            val device = _device.value
+            if (device == null) {
+                deviceRepository.addDevice(Device.createNewDevice(name, location))
+            } else {
+                deviceRepository.updateDevice(device.copy(name = name, placeLocation = location))
+            }
             _addResult.value = true
         }
     }

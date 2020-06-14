@@ -70,7 +70,6 @@ class DeviceSettingFragment : Fragment() {
     }
 
     private fun settingDevice(name: String, location: String) {
-        // TODO: 更新処理
-        viewModel.addDevice(name, location)
+        viewModel.addOrUpdateDevice(name, location)
     }
 }
