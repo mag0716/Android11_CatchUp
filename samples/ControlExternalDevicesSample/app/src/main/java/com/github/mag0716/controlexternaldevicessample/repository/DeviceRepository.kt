@@ -10,7 +10,7 @@ class DeviceRepository(private val deviceDao: DeviceDao) {
         deviceDao.loadDevices()
     }
 
-    suspend fun loadDevice(id: Int): Device = withContext(Dispatchers.IO) {
+    suspend fun loadDevice(id: Int): Device? = withContext(Dispatchers.IO) {
         deviceDao.loadDeviceById(id)
     }
 

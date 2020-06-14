@@ -18,5 +18,10 @@
         android:id="@+id/deviceSettingFragment"
         android:name="com.github.mag0716.controlexternaldevicessample.view.DeviceSettingFragment"
         android:label="DeviceSettingFragment"
-        tools:layout="@layout/fragment_device_setting" />
+        tools:layout="@layout/fragment_device_setting">
+        <argument
+            android:name="deviceId"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
 </navigation>

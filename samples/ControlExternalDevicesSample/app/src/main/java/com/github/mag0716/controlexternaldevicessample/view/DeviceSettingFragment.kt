@@ -9,11 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.github.mag0716.controlexternaldevicessample.R
 import com.google.android.material.textfield.TextInputLayout
 
 class DeviceSettingFragment : Fragment() {
 
+    private val args: DeviceSettingFragmentArgs by navArgs()
     private val viewModel by viewModels<DeviceSettingViewModel>()
 
     private lateinit var deviceNameInput: TextInputLayout
@@ -56,6 +58,15 @@ class DeviceSettingFragment : Fragment() {
                 findNavController().popBackStack()
             }
         })
+        viewModel.device.observe(viewLifecycleOwner, Observer {
+            deviceNameInput.editText?.setText(it.name)
+            deviceLocationInput.editText?.setText(it.placeLocation)
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadDevice(args.deviceId)
     }
 
     private fun settingDevice(name: String, location: String) {

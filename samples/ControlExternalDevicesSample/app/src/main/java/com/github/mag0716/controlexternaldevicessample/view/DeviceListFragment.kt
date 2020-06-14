@@ -16,7 +16,7 @@ import com.github.mag0716.controlexternaldevicessample.R
 import com.github.mag0716.controlexternaldevicessample.model.Device
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class DeviceListFragment : Fragment() {
+class DeviceListFragment : Fragment(), DeviceAdapter.ClickListener {
 
     val viewModel by viewModels<DeviceListViewModel>()
 
@@ -53,7 +53,9 @@ class DeviceListFragment : Fragment() {
             deviceList.adapter =
                 DeviceAdapter(
                     it
-                )
+                ).apply {
+                    clickListener = this@DeviceListFragment
+                }
         })
     }
 
@@ -61,10 +63,21 @@ class DeviceListFragment : Fragment() {
         super.onResume()
         viewModel.loadDeviceList()
     }
+
+    override fun onClick(device: Device) {
+        findNavController().navigate(DeviceListFragmentDirections.actionMoveToDeviceSetting(device.id))
+    }
 }
 
 class DeviceAdapter(private val deviceList: List<Device>) :
     RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
+
+    interface ClickListener {
+        fun onClick(device: Device)
+    }
+
+    var clickListener: ClickListener? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_device, parent, false)
@@ -79,6 +92,9 @@ class DeviceAdapter(private val deviceList: List<Device>) :
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val device = deviceList[position]
+        holder.itemView.setOnClickListener {
+            clickListener?.onClick(device)
+        }
         holder.deviceNameText.text = device.name
         holder.deviceLocationText.text = device.placeLocation
     }
