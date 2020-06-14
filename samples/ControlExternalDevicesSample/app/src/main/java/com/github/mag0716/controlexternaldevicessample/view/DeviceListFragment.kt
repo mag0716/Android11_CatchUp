@@ -1,4 +1,4 @@
-package com.github.mag0716.controlexternaldevicessample
+package com.github.mag0716.controlexternaldevicessample.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mag0716.controlexternaldevicessample.R
 import com.github.mag0716.controlexternaldevicessample.model.Device
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -49,7 +50,10 @@ class DeviceListFragment : Fragment() {
         }
 
         viewModel.deviceList.observe(viewLifecycleOwner, Observer {
-            deviceList.adapter = DeviceAdapter(it)
+            deviceList.adapter =
+                DeviceAdapter(
+                    it
+                )
         })
     }
 
@@ -64,7 +68,9 @@ class DeviceAdapter(private val deviceList: List<Device>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.item_device, parent, false)
-        return DeviceViewHolder(view)
+        return DeviceViewHolder(
+            view
+        )
     }
 
     override fun getItemCount(): Int {

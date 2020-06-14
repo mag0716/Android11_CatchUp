@@ -1,4 +1,4 @@
-package com.github.mag0716.controlexternaldevicessample
+package com.github.mag0716.controlexternaldevicessample.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.github.mag0716.controlexternaldevicessample.R
 import com.google.android.material.textfield.TextInputLayout
 
 class DeviceSettingFragment : Fragment() {
