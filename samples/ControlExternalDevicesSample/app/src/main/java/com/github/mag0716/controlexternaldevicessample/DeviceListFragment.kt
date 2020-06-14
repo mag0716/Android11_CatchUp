@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,8 @@ import com.github.mag0716.controlexternaldevicessample.model.Device
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DeviceListFragment : Fragment() {
+
+    val viewModel by viewModels<DeviceListViewModel>()
 
     private lateinit var deviceList: RecyclerView
     private lateinit var addButton: FloatingActionButton
@@ -39,18 +43,19 @@ class DeviceListFragment : Fragment() {
                     DividerItemDecoration.VERTICAL
                 )
             )
-            // TODO: debug
-            val deviceList = mutableListOf<Device>()
-            for (i in 0..10) {
-                deviceList.add(
-                    Device(i, "device$i", "location$i")
-                )
-            }
-            adapter = DeviceAdapter(deviceList)
         }
         addButton.setOnClickListener {
             findNavController().navigate(R.id.actionMoveToDeviceSetting)
         }
+
+        viewModel.deviceList.observe(viewLifecycleOwner, Observer {
+            deviceList.adapter = DeviceAdapter(it)
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadDeviceList()
     }
 }
 
