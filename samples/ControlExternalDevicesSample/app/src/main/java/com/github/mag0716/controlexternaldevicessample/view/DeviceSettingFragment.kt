@@ -1,9 +1,7 @@
 package com.github.mag0716.controlexternaldevicessample.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,9 +16,18 @@ class DeviceSettingFragment : Fragment() {
     private val args: DeviceSettingFragmentArgs by navArgs()
     private val viewModel by viewModels<DeviceSettingViewModel>()
 
+    private val isUpdate: Boolean by lazy {
+        args.deviceId != 0
+    }
+
     private lateinit var deviceNameInput: TextInputLayout
     private lateinit var deviceLocationInput: TextInputLayout
     private lateinit var settingButton: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(isUpdate)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +60,7 @@ class DeviceSettingFragment : Fragment() {
             }
         }
 
-        viewModel.addResult.observe(viewLifecycleOwner, Observer {
+        viewModel.databaseOperationResult.observe(viewLifecycleOwner, Observer {
             if (it) {
                 findNavController().popBackStack()
             }
@@ -66,7 +73,26 @@ class DeviceSettingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadDevice(args.deviceId)
+        if (isUpdate) {
+            viewModel.loadDevice(args.deviceId)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        if (isUpdate) {
+            inflater.inflate(R.menu.menu_device_setting, menu)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.delete -> {
+                viewModel.deleteDevice(args.deviceId)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun settingDevice(name: String, location: String) {

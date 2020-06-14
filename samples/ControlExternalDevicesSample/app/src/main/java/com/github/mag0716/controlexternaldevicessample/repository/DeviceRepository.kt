@@ -21,4 +21,11 @@ class DeviceRepository(private val deviceDao: DeviceDao) {
     suspend fun updateDevice(device: Device) = withContext(Dispatchers.IO) {
         deviceDao.updateDevices(device)
     }
+
+    suspend fun deleteDevice(id: Int) = withContext(Dispatchers.IO) {
+        val device = loadDevice(id)
+        if (device != null) {
+            deviceDao.delete(device)
+        }
+    }
 }

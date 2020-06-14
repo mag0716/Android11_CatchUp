@@ -11,8 +11,8 @@ import kotlinx.coroutines.launch
 
 class DeviceSettingViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _addResult: MutableLiveData<Boolean> = MutableLiveData()
-    val addResult: LiveData<Boolean> = _addResult
+    private val _databaseOperationResult: MutableLiveData<Boolean> = MutableLiveData()
+    val databaseOperationResult: LiveData<Boolean> = _databaseOperationResult
 
     private val _device: MutableLiveData<Device> = MutableLiveData()
     val device: LiveData<Device> = _device
@@ -26,7 +26,7 @@ class DeviceSettingViewModel(application: Application) : AndroidViewModel(applic
             } else {
                 deviceRepository.updateDevice(device.copy(name = name, placeLocation = location))
             }
-            _addResult.value = true
+            _databaseOperationResult.value = true
         }
     }
 
@@ -37,6 +37,14 @@ class DeviceSettingViewModel(application: Application) : AndroidViewModel(applic
             if (device != null) {
                 _device.value = device
             }
+        }
+    }
+
+    fun deleteDevice(id: Int) {
+        val deviceRepository = getApplication<App>().deviceRepository
+        viewModelScope.launch {
+            deviceRepository.deleteDevice(id)
+            _databaseOperationResult.value = true
         }
     }
 }
