@@ -15,10 +15,7 @@ import com.github.mag0716.controlexternaldevicessample.model.Device
 import com.github.mag0716.controlexternaldevicessample.repository.DeviceRepository
 import io.reactivex.Flowable
 import io.reactivex.processors.ReplayProcessor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.reactivestreams.FlowAdapters
 import java.util.concurrent.Flow
 import java.util.function.Consumer
@@ -79,8 +76,24 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
                 deviceRepository.loadDevice(deviceId)
             }
             if (device != null) {
-                // TODO: 外部デバイスの状態を取得
-                updatePublisher.onNext(createControl(context, device, true))
+                launch {
+                    val isConnected = async {
+                        deviceRepository.isConnected(deviceId)
+                    }
+                    val isOn = async {
+                        deviceRepository.getStatus(deviceId)
+                    }
+                    updatePublisher.onNext(
+                        createControl(
+                            context,
+                            device,
+                            isConnected.await(),
+                            isOn.await()
+                        )
+                    )
+                }
+            } else {
+                // TODO: 途中でデバイスを削除したケース
             }
         }
 
@@ -102,8 +115,19 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
             }
             if (device != null) {
                 consumer.accept(ControlAction.RESPONSE_OK)
-                if (updateDeviceState(action.newState)) {
-                    updatePublisher.onNext(createControl(context, device, action.newState))
+                launch {
+                    deviceRepository.updateStatus(deviceId, action.newState)
+                    val isConnected = async {
+                        deviceRepository.isConnected(deviceId)
+                    }
+                    updatePublisher.onNext(
+                        createControl(
+                            context,
+                            device,
+                            isConnected.await(),
+                            action.newState
+                        )
+                    )
                 }
             }
         }
@@ -117,7 +141,12 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
             .build()
     }
 
-    private fun createControl(context: Context, device: Device, isChecked: Boolean): Control {
+    private fun createControl(
+        context: Context,
+        device: Device,
+        isEnabled: Boolean,
+        isChecked: Boolean
+    ): Control {
         return Control.StatefulBuilder("$CONTROL_ID${device.id}", createPendingIntent(context))
             .setTitle(device.name)
             .setSubtitle(device.placeLocation)
@@ -128,8 +157,7 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
                     ControlButton(isChecked, "turn ON/OFF")
                 )
             )
-            // TODO: 外部デバイスの状態を取得する
-            .setStatus(Control.STATUS_OK)
+            .setStatus(if (isEnabled) Control.STATUS_OK else Control.STATUS_ERROR)
             .build()
     }
 
@@ -141,10 +169,5 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT
         )
-    }
-
-    private fun updateDeviceState(isOn: Boolean): Boolean {
-        // TODO: 外部デバイスに対しての更新処理
-        return true
     }
 }
