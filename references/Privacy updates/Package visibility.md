@@ -2,14 +2,49 @@
 
 https://developer.android.com/preview/privacy/package-visibility
 
-* 多くのケースでは対応が不要
 * マニフェストファイルに `<queries>` の追加
   * package name
   * intent signature
-* `PackageManager#queryIntentActivityes` などで他のアプリの情報を取得できるようになる
-* `startService()` などのようなメソッドで他のアプリを操作できるようになる
+  
+Note:多くのケースでは対応が不要
 
-### Most common interactions aren't affected
+* `PackageManager#queryIntentActivityes` などでは `<queries>` で定義した他のアプリの情報を取得できるようになる
+* `startService()` などのようなメソッドで `<queries>` で定義した他のアプリを操作できるようになる
+
+### Set up your environment
+
+* Android Studio 3.6.1 以上
+* Android Gradle Plugin は最新リリースを利用する
+
+### Query and interact with specific packages
+
+* 連携したいアプリの情報を知っている場合は `<queries>` 内に `<packages>` を指定
+
+### Query and interact with apps given an intent filter
+
+* 連携したいアプリの情報を知らない場合は `<queries>` 内に `<intent>` を指定
+
+### Query and interact with all apps
+
+* Google Play のような全てのアプリと連携する必要があるアプリについては `QUERY_ALL_PACKAGES` を利用する
+
+### Log messages for package filtering
+
+* 以下のコマンドでログをフィルタリングすることが可能
+  * `adb shell pm log-visibility --enable your-package-name`
+  * `I/AppsFilter: interaction: PackageSetting{7654321 com.example.myapp/12345} -> PackageSetting{...} BLOCKED` のようなログが出力される
+* Caution: アプリのパフォーマンスに影響するのでテスト中以外は無効化すること
+
+### Test the change
+
+* Android Studio 3.6.1 以上を利用
+* `targetSdkVersion` に `30` を指定
+* マニフェストファイルには `<queries>` は定義しない
+* `getInstalledApplications(), getInstalledPackages()` を呼びだす
+* 動作しないこと機能がないかを確認
+* `<queries>`を定義する
+
+### Use cases that aren't affected by the changes
 
 * 以下のケースでは対応が不要
   * 自身のアプリがターゲット
@@ -34,31 +69,3 @@ https://developer.android.com/preview/privacy/package-visibility
 
 * `FLAG_ACTIVITY_REQUIRE_DEFAULT`
   * デバイスに `Intent` を扱えるアプリが1つしか存在しない、もしくはデフォルトアプリに設定されている場合のみ処理される
-
-### Query and interact with specific packages
-
-* 連携したいアプリの情報を知っている場合は `<queries>` 内に `<packages>` を指定
-
-### Query and interact with apps given an intent filter
-
-* 連携したいアプリの情報を知らない場合は `<queries>` 内に `<intent>` を指定
-
-### Query and interact with all apps
-
-* Google Play のような全てのアプリと連携する必要があるアプリについては `QUERY_ALL_PACKAGES` を利用する
-
-### Log messages for package filtering
-
-* 以下のコマンドでログをフィルタリングすることが可能
-  * `adb shell pm log-visibility --enable your-package-name`
-  * `I/AppsFilter: interaction: PackageSetting{7654321 com.example.myapp/12345} -> PackageSetting{...} BLOCKED` のようなログが出力される
-* Caution: アプリのパフォーマンスに影響するのでテスト中以外は無効化すること
-
-### Test the change
-
-* Android Studio 3.6.1 以上を利用
-* `targetSdkVersion` に `R` を指定
-* マニフェストファイルには `<queries>` は定義しない
-* `getInstalledApplications(), getInstalledPackages()` を呼びだす
-* 動作しないこと機能がないかを確認
-* `<queries>`を定義する
