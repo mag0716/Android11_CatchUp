@@ -11,48 +11,59 @@ import android.service.controls.actions.ControlAction
 import android.service.controls.templates.ControlButton
 import android.service.controls.templates.ToggleTemplate
 import android.util.Log
+import com.github.mag0716.controlexternaldevicessample.model.Device
+import com.github.mag0716.controlexternaldevicessample.repository.DeviceRepository
 import io.reactivex.Flowable
 import io.reactivex.processors.ReplayProcessor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
 import org.reactivestreams.FlowAdapters
 import java.util.concurrent.Flow
 import java.util.function.Consumer
+import kotlin.coroutines.CoroutineContext
 
-class SampleControlsProviderService : ControlsProviderService() {
+class SampleControlsProviderService : ControlsProviderService(), CoroutineScope {
 
     companion object {
         const val TAG = "SampleControlsProvideService"
 
         const val CONTROL_REQUEST_CODE = 0
-        const val CONTROL_ID = "Control ID"
-        const val TEMPLATE_ID = "template ID"
+        const val CONTROL_ID = "Control"
+        const val TEMPLATE_ID = "template"
     }
 
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.IO
+
+    private lateinit var deviceRepository: DeviceRepository
     private lateinit var updatePublisher: ReplayProcessor<Control>
 
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "SampleControlsProviderService#onCreate")
+        job = Job()
+        deviceRepository = (application as App).deviceRepository
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     override fun createPublisherForAllAvailable(): Flow.Publisher<Control> {
         Log.d(TAG, "SampleControlsProviderService#createPublisherForAllAvailable")
         val context = baseContext
-        val intent = Intent()
-        val pendingIntent = PendingIntent.getActivity(
-            context,
-            CONTROL_REQUEST_CODE,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
 
         val controls = mutableListOf<Control>()
-        val control = Control.StatelessBuilder(CONTROL_ID, pendingIntent)
-            .setTitle("title")
-            .setSubtitle("subtitle")
-            .setStructure("structure")
-            .setDeviceType(DeviceTypes.TYPE_LIGHT)
-            .build()
-        controls.add(control)
+        val deviceList = runBlocking {
+            deviceRepository.loadDevices()
+        }
+        for (device in deviceList) {
+            controls.add(createStatelessControl(context, device))
+        }
 
         return FlowAdapters.toFlowPublisher(Flowable.fromIterable(controls))
     }
@@ -62,22 +73,15 @@ class SampleControlsProviderService : ControlsProviderService() {
         val context = baseContext
         updatePublisher = ReplayProcessor.create()
 
-        if (controlIds.contains(CONTROL_ID)) {
-            val control = Control.StatefulBuilder(CONTROL_ID, createPendingIntent(context))
-                .setTitle("title")
-                .setSubtitle("subtitle")
-                .setStructure("structure")
-                .setDeviceType(DeviceTypes.TYPE_LIGHT)
-                .setControlTemplate(
-                    ToggleTemplate(
-                        TEMPLATE_ID,
-                        ControlButton(true, "turn ON/OFF")
-                    )
-                )
-                .setStatus(Control.STATUS_OK) // TODO: 外部デバイスの状態を取得
-                .build()
-
-            updatePublisher.onNext(control)
+        for (controlId in controlIds) {
+            val deviceId = controlId.replace(CONTROL_ID, "").toInt()
+            val device = runBlocking {
+                deviceRepository.loadDevice(deviceId)
+            }
+            if (device != null) {
+                // TODO: 外部デバイスの状態を取得
+                updatePublisher.onNext(createControl(context, device, true))
+            }
         }
 
         return FlowAdapters.toFlowPublisher(Flowable.fromPublisher(updatePublisher))
@@ -92,26 +96,41 @@ class SampleControlsProviderService : ControlsProviderService() {
         val context = baseContext
 
         if (action is BooleanAction) {
-            consumer.accept(ControlAction.RESPONSE_OK)
-
-            if (updateDeviceState(action.newState)) {
-                val control = Control.StatefulBuilder(CONTROL_ID, createPendingIntent(context))
-                    .setTitle("title")
-                    .setSubtitle("subtitle")
-                    .setStructure("structure")
-                    .setDeviceType(DeviceTypes.TYPE_LIGHT)
-                    .setControlTemplate(
-                        ToggleTemplate(
-                            TEMPLATE_ID,
-                            ControlButton(action.newState, "turn ON/OFF")
-                        )
-                    )
-                    .setStatus(Control.STATUS_OK)
-                    .build()
-
-                updatePublisher.onNext(control)
+            val deviceId = controlId.replace(CONTROL_ID, "").toInt()
+            val device = runBlocking {
+                deviceRepository.loadDevice(deviceId)
+            }
+            if (device != null) {
+                consumer.accept(ControlAction.RESPONSE_OK)
+                if (updateDeviceState(action.newState)) {
+                    updatePublisher.onNext(createControl(context, device, action.newState))
+                }
             }
         }
+    }
+
+    private fun createStatelessControl(context: Context, device: Device): Control {
+        return Control.StatelessBuilder("$CONTROL_ID${device.id}", createPendingIntent(context))
+            .setTitle(device.name)
+            .setSubtitle(device.placeLocation)
+            .setDeviceType(DeviceTypes.TYPE_LIGHT)
+            .build()
+    }
+
+    private fun createControl(context: Context, device: Device, isChecked: Boolean): Control {
+        return Control.StatefulBuilder("$CONTROL_ID${device.id}", createPendingIntent(context))
+            .setTitle(device.name)
+            .setSubtitle(device.placeLocation)
+            .setDeviceType(DeviceTypes.TYPE_LIGHT)
+            .setControlTemplate(
+                ToggleTemplate(
+                    "$TEMPLATE_ID${device.id}",
+                    ControlButton(isChecked, "turn ON/OFF")
+                )
+            )
+            // TODO: 外部デバイスの状態を取得する
+            .setStatus(Control.STATUS_OK)
+            .build()
     }
 
     private fun createPendingIntent(context: Context): PendingIntent {
