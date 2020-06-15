@@ -8,6 +8,8 @@ https://developer.android.com/preview/privacy
   * `targetSdkVersion` が Android 11、もしくは、`requestLegacyExternalStorage=true` がセットされていないアプリに影響する
 * One-time permissions
   * 全てのアプリに影響する
+* Permissions auto-reset
+  * `targetSdkVersion` が Android 11 の端末に影響する
 * Background location access
   * `targetSdkVersion` が Android 11で常に位置情報にアクセスが必要なアプリに影響する
 * Package Visibility
