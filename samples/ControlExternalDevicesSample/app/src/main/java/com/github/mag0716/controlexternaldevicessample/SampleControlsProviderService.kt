@@ -94,7 +94,15 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
                     )
                 }
             } else {
-                // TODO: 途中でデバイスを削除したケース
+                // 途中でデバイスを削除したケース
+                updatePublisher.onNext(
+                    createControl(
+                        context,
+                        Device.createNotFoundDevice(deviceId),
+                        isEnabled = false,
+                        isChecked = false
+                    )
+                )
             }
         }
 

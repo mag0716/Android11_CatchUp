@@ -14,5 +14,7 @@ data class Device(
             name: String,
             placeLocation: String
         ) = Device(0, name, placeLocation)
+
+        fun createNotFoundDevice(id: Int) = Device(id, "NotFound", "")
     }
 }
