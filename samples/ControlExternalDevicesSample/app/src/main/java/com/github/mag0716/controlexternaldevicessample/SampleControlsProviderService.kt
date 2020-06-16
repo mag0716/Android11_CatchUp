@@ -2,7 +2,6 @@ package com.github.mag0716.controlexternaldevicessample
 
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.service.controls.Control
 import android.service.controls.ControlsProviderService
 import android.service.controls.DeviceTypes
@@ -11,8 +10,10 @@ import android.service.controls.actions.ControlAction
 import android.service.controls.templates.ControlButton
 import android.service.controls.templates.ToggleTemplate
 import android.util.Log
+import androidx.navigation.NavDeepLinkBuilder
 import com.github.mag0716.controlexternaldevicessample.model.Device
 import com.github.mag0716.controlexternaldevicessample.repository.DeviceRepository
+import com.github.mag0716.controlexternaldevicessample.view.DeviceSettingFragmentArgs
 import io.reactivex.Flowable
 import io.reactivex.processors.ReplayProcessor
 import kotlinx.coroutines.*
@@ -134,7 +135,10 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
     }
 
     private fun createStatelessControl(context: Context, device: Device): Control {
-        return Control.StatelessBuilder("$CONTROL_ID${device.id}", createPendingIntent(context))
+        return Control.StatelessBuilder(
+            "$CONTROL_ID${device.id}",
+            createPendingIntent(context, device.id)
+        )
             .setTitle(device.name)
             .setSubtitle(device.placeLocation)
             .setDeviceType(DeviceTypes.TYPE_LIGHT)
@@ -147,7 +151,10 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
         isEnabled: Boolean,
         isChecked: Boolean
     ): Control {
-        return Control.StatefulBuilder("$CONTROL_ID${device.id}", createPendingIntent(context))
+        return Control.StatefulBuilder(
+            "$CONTROL_ID${device.id}",
+            createPendingIntent(context, device.id)
+        )
             .setTitle(device.name)
             .setSubtitle(device.placeLocation)
             .setDeviceType(DeviceTypes.TYPE_LIGHT)
@@ -161,13 +168,12 @@ class SampleControlsProviderService : ControlsProviderService(), CoroutineScope 
             .build()
     }
 
-    private fun createPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(this, MainActivity::class.java)
-        return PendingIntent.getActivity(
-            context,
-            CONTROL_REQUEST_CODE,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
+    private fun createPendingIntent(context: Context, deviceId: Int): PendingIntent {
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
+        return NavDeepLinkBuilder(context)
+            .setGraph(R.navigation.navigation_graph)
+            .setDestination(R.id.deviceSettingFragment)
+            .setArguments(DeviceSettingFragmentArgs(deviceId).toBundle())
+            .createPendingIntent()
     }
 }
