@@ -256,6 +256,26 @@ STIR/SHAKEN
   * `Call.Details` の一部として情報が含まれる
 * `CallScreeningService` が `READ_CONTACTS` 権限を保持していたら、アプリは着信時、発信時に通知される
 
+##### Open Mobile API updates
+
+* Android 11 から Open Mobile API(OMAPI) に以下の機能が追加される
+ * キャリア特権ルールのパース
+ * 組み込みセキュア要素(eSE)へのアクセスまたはプロビジョニングのカスタマイズ
+ * デバイスの能力をフィルタリングするアプリケーションのための明確なインジケータ
+ 
+##### Performant VPNs
+
+* targetSdkVersion が 30 以上か、29 以上の端末で動作しているアプリであれば IKEv2/IPsec が適用される
+
+##### Per-process network access control
+
+* Android 11 からプロセスごとにネットワークアクセスを許可するかどうかを扱えるようになる
+ * AndroidManifests.xml に `<processes>` を定義することで適用可能
+ 
+##### Allow multiple installed Passpoint configurations with the same FQDN
+
+* Android 11 から `PasspointConfiguration.getUniqueId()` で `PasspointConfiguration` 用のユニークIDを取得できるようになり、ユーザが同じ FQDN のプロファイルを複数インストールできるようになる
+
 ##### GNSS antenna support
 
 ```
@@ -328,6 +348,13 @@ https://developer.android.com/ndk/guides/image-decoder
   * YUV reprocessing
   * Level 3 devices
   * Logical camera support
+
+##### Support for concurrent use of more than one camera
+
+* 一度に複数のカメラを操作することが可能になる
+* 端末がサポートしているかどうかは以下の API を利用する
+ * `getConcurrentCameraIds()`
+ * `isConcurrentSessionConfigurationSupported()`
 
 ##### Better support for HEIF images with multipe frames
 
