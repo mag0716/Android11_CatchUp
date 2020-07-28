@@ -4,6 +4,11 @@ https://developer.android.com/preview/behavior-changes-all
 
 ### Privacy
 
+* One-time permissions：位置情報、マイク、カメラに一時的にアクセスを許可が可能になる
+* Permission dialog visibility：繰り返し権限を拒否すると、「don't ask again」と同じ意味になる
+* Data access auditing：プライベートなデータにアクセスしている箇所を特定できるようになる
+* System alert window permissions：特定のアプリは自動的に `SYSTEM_ALERT_WINDOW` 権限が付与される。`ACTION_MANAGE_OVERLAY_PERMISSION` は常に端末の設定画面に遷移する
+
 https://developer.android.com/preview/privacy
 
 ### Security
@@ -30,20 +35,9 @@ Note: この動作はOTAアップデートでの再起動のみなので Direct 
     * アカウント切り替えを実施
   * `UsagesStatsManager` を利用している場合はアンロック後にアクセスするよう対応が必要
 
-### Camera
+#### Emulator support for 5G
 
-#### Support for concurrent use of more than one camera
-
-1度に同時に複数のカメラを使うための API が追加
-
-`getConcurrentCameraIds`：同時に利用できるカメラのセット
-`isConcurrentSessionConfigurationSupported`：カメラの同時利用をサポートしているかどうか
-
-### Connectivity
-
-#### Open Mobile API changes
-
-カバーしていない領域なのでスキップ
+* Android 11 で追加された 5G API を使った機能をテストを可能とするために、エミュレータに 5G をエミュレートする機能が追加された
 
 ### Performance and debugging
 
@@ -72,31 +66,6 @@ Note: この動作はOTAアップデートでの再起動のみなので Direct 
 
 Note:以前のバージョンでもカスタムウィジェットでアクセシビリティアクションを定義する必要がある。アクセシビリティアクションの定義を簡単にするために https://developer.android.com/guide/topics/ui/accessibility/principles#system-widgets に従うことが推奨されている。
 
-#### Declare accessibility button usage in metadata file
-
-* `AccessibilityServiceInfo.FLAG_REQUEST_ACCESSIBILITY_BUTTON` を利用しても無視されるようになった
-* `flagRequestAccessibilityButton` に metadata file を指定する必要がある
-
-### User interface
-
-#### SYSTEM_ALRET_WINDOW changes
-
-`SYSTEM_ALERT_WINDOW` 権限を付与する方法に変更がある
-
-##### Certain apps are automatically granted SYSTEM_ALERT_WINDOW permission upon request
-
-`ACTION_MANAGE_OVERLAY_PERMISSION` を送信する必要はない。
-
-`ROLE_CALL_SCREENING` があり `SYSTEM_ALERT_WINDOW` をリクエストするアプリは自動的に権限が付与される
-`ROLE_CALL_SCREENING` を失うと権限も失う
-
-##### MANAGE_OVERLAY_PERMISSION intents always bring user to system permissions screen
-
-Android 11 から、`ACTION_MANAGE_OVERLAY_PERMISSION` は `package:` データは無視され、常に設定画面のトップに遷移するようになる
-
-ユーザは選択したアプリに対して権限を許可、拒否するのかを最初に選択する必要がある
-意図的に許可させることによってユーザを保護するための意図がある
-
 ### App compatibility
 
 #### Non-SDK interface restrictions
@@ -107,4 +76,5 @@ Android 11 から、`ACTION_MANAGE_OVERLAY_PERMISSION` は `package:` データ�
 
 #### Maps v1 shared library removed
 
-Android 10 の時点で deprecated & 機能停止となっていた v1 の Maps が完全に削除される
+* Android 10 の時点で deprecated & 機能停止となっていた v1 の Maps が完全に削除される
+* Important：SDK 移行時にマニフェストファイルから `<uses-library>` から Maps v1 への参照を削除すること
