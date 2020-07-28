@@ -24,6 +24,7 @@ Android 11 では、位置情報、マイク、カメラに関するパーミッ
 * 家族の利用状況などを把握するアプリ
 * データの同期
 * 外部デバイスとの連携
+* コンパニオンデバイスとのペア
 
 端末の設定アプリでアプリ専用の画面へ遷移させるには `Settings.ACTION_APPLICATION_DETAILS_SETTINGS` を利用する。
 
@@ -52,6 +53,27 @@ Android 11 では、位置情報、マイク、カメラに関するパーミッ
 * 権限に対して2度拒否すると「don't ask again」と同じ動作をする
 * バックキーでダイアログを閉じた場合は拒否としてカウントしない
 * `requestPermissions()` から端末の設定画面へ遷移し、バックキーをタップした場合は拒否としてカウントする
+
+### System alert window changes
+
+`SYSTEM_ALERT_WINDOW` 権限の許可の仕方にいくつか変更がある
+
+#### Certain apps are automatically grated SYSTEM_ALERT_WINDOW permission upon request
+
+特定のアプリはリクエスト時に自動的に `SYSTEM_ALERT_WINDOW` が付与される
+
+* `ROLE_CALL_SCREENING` を保持しているアプリ
+* `MediaProjection` を通じて画面キャプチャをするアプリ
+  * キャプチャを停止すると、権限を失う
+
+これらのアプリは `ACTION_MANAGE_OVERLAY_PERMISSION` を送信する必要はなく、直接 `SYSTEM_ALERT_WINDOW` をリクエストすることができる
+
+#### MANAGE_OVERLAY_PERMISSION intents always bring user to system permissions screen
+
+`ACTION_MANAGE_OVERLAY_PERMISSION` Intent は常に設定画面のトップ階層の画面に遷移する
+  * `package:` データは無視される
+
+この変更は権限許可をより意図的に行わせることでユーザを保護する目的がある
 
 ### Phone numbers
 
