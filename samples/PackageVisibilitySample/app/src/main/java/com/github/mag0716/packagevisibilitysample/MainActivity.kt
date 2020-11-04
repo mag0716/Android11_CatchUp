@@ -1,16 +1,21 @@
 package com.github.mag0716.packagevisibilitysample
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "PackageVisibility"
+        private const val TEST_URL =
+            "https://developer.android.com/about/versions/11/privacy/package-visibility"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +33,25 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             startActivity(intent)
+        }
+        button3.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, TEST_URL.toUri())
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Browser App does not exists.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        button4.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, TEST_URL.toUri())
+            try {
+                startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(this, "Browser App does not exists.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        button5.setOnClickListener {
+
         }
     }
 
