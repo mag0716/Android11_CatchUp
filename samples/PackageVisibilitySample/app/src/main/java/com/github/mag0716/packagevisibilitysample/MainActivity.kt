@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -51,7 +52,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         button5.setOnClickListener {
-
+            val intent = CustomTabsIntent.Builder()
+                .setToolbarColor(getColor(R.color.colorPrimary))
+                .build()
+            intent.launchUrl(this, TEST_URL.toUri())
         }
     }
 
