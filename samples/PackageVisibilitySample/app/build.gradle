@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion "android-R"
+    compileSdkVersion 30
 
 
     defaultConfig {
         applicationId "com.github.mag0716.packagevisibilitysample"
         minSdkVersion 23
-        targetSdkVersion "R"
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
