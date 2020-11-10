@@ -4,6 +4,9 @@
 
     <queries>
         <package android:name="com.github.mag0716.packagevisibility.target" />
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
     </queries>
 
     <application
